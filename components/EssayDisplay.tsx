@@ -1,8 +1,9 @@
 
 import React from 'react';
+import { EssayParagraph } from '../types';
 
 interface EssayDisplayProps {
-  essay: string;
+  essay: EssayParagraph[] | null;
   isLoading: boolean;
   error: string | null;
   onDownload: () => void;
@@ -30,10 +31,15 @@ export const EssayDisplay: React.FC<EssayDisplayProps> = ({ essay, isLoading, er
     if (error) {
       return <p className="text-red-400 text-center">{error}</p>;
     }
-    if (essay) {
+    if (essay && essay.length > 0) {
       return (
-        <div className="prose prose-invert max-w-none text-slate-300 whitespace-pre-wrap">
-            {essay}
+        <div className="prose prose-invert max-w-none text-slate-300">
+            {essay.map((paragraph, index) => (
+                <div key={index} className="mb-6"> {/* Added margin bottom for spacing between paragraphs */}
+                    <h3 className="text-xl font-semibold text-sky-300 mb-2">{paragraph.heading}</h3>
+                    <p className="leading-relaxed">{paragraph.content}</p>
+                </div>
+            ))}
         </div>
       );
     }
@@ -50,7 +56,7 @@ export const EssayDisplay: React.FC<EssayDisplayProps> = ({ essay, isLoading, er
       <div className="flex-grow overflow-y-auto pr-2">
         {renderContent()}
       </div>
-      {essay && !isLoading && (
+      {essay && essay.length > 0 && !isLoading && (
         <div className="pt-4 mt-4 border-t border-slate-700">
           <button
             onClick={onDownload}
